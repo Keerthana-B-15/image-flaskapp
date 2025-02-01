@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Disease Classifier</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #2b6066;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 100%;
+            max-width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: white;
+            color: #2b6066;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #ddd;
+        }
+        .results {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-height: 400px; /* Set a max-height for the results container */
+            overflow-y: auto; /* Allow vertical scrolling if content exceeds max-height */
+        }
+        .result {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            width: calc(33.333% - 20px);
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .result img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .result p {
+            margin: 5px 0;
+            font-size: 1em;
+        }
+        .result p strong {
+            font-weight: bold;
+        }
+        @media (max-width: 1200px) {
+            .result {
+                width: calc(50% - 20px);
+            }
+        }
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 1.5em;
+            }
+            .container {
+                padding: 10px;
+            }
+            input[type="file"] {
+                max-width: 100%;
+            }
+            .result {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Skin Images for Classification</h2>
+
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="files[]" multiple required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <h3>Uploaded Images & Predictions</h3>
+        <div class="results">
+            {% if results %}
+                {% for result in results %}
+                    {% if 'error' in result %}
+                        <div class="result">
+                            <p><strong>Error:</strong> {{ result.error }}</p>
+                        </div>
+                    {% else %}
+                        <div class="result">
+                            <img src="{{ result.file_path }}" alt="Uploaded Image">
+                            <p><strong>Disease:</strong> {{ result.disease }}</p>
+                            <p><strong>Confidence:</strong> {{ '%.2f' % (result.confidence * 100) }}%</p>
+                            <p><strong>Reason:</strong> {{ result.reason }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
